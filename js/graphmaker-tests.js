@@ -347,3 +347,55 @@ QUnit.test("formatNumTo", function(assert){
     assert.equal(this.graphmaker.formatNumTo(6000.666789, 0, 'km'), "6,000km", "Can be given third argument to add to end of result string");
 
 });
+
+
+
+
+
+//// 3. DOM Tools ////
+
+// Initial Load
+QUnit.module( "DOM Tools", {
+
+    beforeEach : function( assert ){
+
+        var done = assert.async();
+        var that = this;
+        // Prepare Graphmaker
+        this.graphmaker = new Graphmaker();
+
+        // Set up JSON URL
+        var url =   'https://api.nasa.gov/neo/rest/v1/feed?' +
+                    'start_date=' + this.graphmaker.date +
+                    '&api_key=3NW9wqg2QvSWpj4WAFj3tTQYTK85Hj1UEqKsoRo4';
+        this.graphmaker.url = url;
+
+        // Retrieve JSON
+
+        this.graphmaker.getRawDataAsync(this.graphmaker.url, {method: "GET"},
+        function(error, success){
+            if (error) assert.ok(false, error);
+            else assert.ok(true, "Loads JSON data");
+
+            // Store Asteroids in array
+
+            var target  = JSON.parse(that.graphmaker.rawdata),
+                pointer = that.graphmaker.date;
+
+            that.graphmaker.ASTEROIDS = that.graphmaker.accessNestedData(target, pointer);
+            done();
+        });
+
+
+
+}});
+
+QUnit.test("buildDomElementFrom", function(assert){
+
+    test.assert(true, "Can build dom element named by first argument");
+
+    var div = this.graphmaker.buildDomElementFrom("div");
+
+    
+
+});

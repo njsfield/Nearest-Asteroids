@@ -225,3 +225,19 @@ Graphmaker.prototype.formatNumTo = function(num, decPlaces, postString){
 	return parts + postString;
 
 };
+
+
+
+
+
+
+
+
+////* DOM TOOLS *////
+
+Graphmaker.prototype.buildDomElementFrom = function(name, attrs, content){
+
+
+
+
+}
