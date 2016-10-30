@@ -46,7 +46,7 @@ Graphmaker.prototype.getRawDataAsync = function(url, settings, callback){
 
         xhr.onerror = function(e){
 
-            callback('Error retrieving JSON:' + e, undefined);
+            callback('Error retrieving data:' + e, undefined);
         };
 
     xhr.open(settings.method, url, true);
@@ -129,39 +129,67 @@ Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets){
 
 }
 
-// /* Function to compare data sets, and build new array of objects */
-//
-// Graphmaker.prototype.compareAndBuild = function(dataset, id, property, proplabel){
-//
-//     var that = this;
-//     var resultsArray = [];
-//
-//     for (var item of dataset) {
-//
-//         var result = {};
-//
-//         result[id] = item[id];
-//
-//         if (!result[id]) {
-//             return "Cannot find property " + id + " in " + item;
-//         }
-//
-//         result[proplabel] = that.accessNestedData(item, property);
-//
-//         if (typeof result[proplabel] != 'number') {
-//
-//             return "Cannot find property " + property + " in " + item;
-//         }
-//
-//         resultsArray.push(result);
-//
-//     };
-//
-//     resultsArray = resultsArray.sort(function(a,b){
-//
-//         return a[proplabel] < b[proplabel];
-//     });
-//
-//     return resultsArray;
-//
-// }
+/* Function to sort data sets, and build new array of objects */
+
+Graphmaker.prototype.sortBy = function(dataset, property, direction){
+
+    if (dataset[0][property] == undefined) return "Cannot find property " + property;
+
+    var resultsArray = dataset.sort(function(a,b){
+
+        var x = (typeof a[property]) == "number" ? a[property] : a[property].toLowerCase(),
+            y = (typeof b[property]) == "number" ? b[property] : a[property].toLowerCase();
+
+        return x < y;
+    });
+
+    return direction == "high-to-low" ? resultsArray : resultsArray.reverse();
+
+}
+
+
+
+
+
+/* Function to find object property values and replace/format their values */
+
+Graphmaker.prototype.nestedReplaceWith = function(dataset, property, _new){
+
+    dataset = dataset instanceof Array? dataset : [dataset];
+
+    var newArray = [];
+
+    for (var item of dataset){
+
+        var newItem = item;
+            item[property] = _new instanceof Function ? _new(item[property]) : _new;
+
+        newArray.push(newItem);
+    }
+
+    return newArray;
+
+}
+
+
+/* Function to format number to string with optional poststring */
+
+Graphmaker.prototype.formatNumTo = function(num, decPlaces, postString){
+
+    postString = postString || "";
+    num = parseFloat(num);
+    num = decPlaces >= 0 ? num.toFixed(decPlaces + 1).slice(0,-1) : num.toString();
+
+    var parts = num.split('.');
+
+	parts[0] = parts[0].replace(/./g, function(c, i, a) {
+
+	    return i !== 0 && ((a.length - i) % 3 === 0) ? ',' + c : c;
+
+	});
+
+	parts = parts[1]? parts.join(".") : parts[0];
+
+	return parts + postString;
+
+};
