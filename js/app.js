@@ -1,13 +1,35 @@
 /* Test against QUnit failures */
 
+/* Initialize */
 var graphmaker = new Graphmaker();
 
-var data = [{name: "nick", age: 26, career: "software", birthday: 1989},
-            {name: "jen", age: 29, career: "teacher", birthday: 1986},
-            {name: "alex", age: 60, career: "unemployed", birthday: 1920},
-            {name: "tom", age: 45, career: "sales", birthday: 1974},
-            {name: "matt", age: 18, career: "drugdealer", birthday: 1994}];
+graphmaker.url =   'https://api.nasa.gov/neo/rest/v1/feed?' +
+            'start_date=' + graphmaker.date +
+            '&api_key=3NW9wqg2QvSWpj4WAFj3tTQYTK85Hj1UEqKsoRo4';
 
-var output = this.graphmaker.generateToggleGraph(data, {name: "name", age: "age", career: "career", birthday: "birthday"});
+/* Retrieve Nasa JSON */
+graphmaker.getRawDataAsync(graphmaker.url, {method: "GET"}, function(){
 
-document.getElementById("graph").appendChild(output);
+    var target  = JSON.parse(graphmaker.rawdata),
+        pointer = graphmaker.date;
+
+        graphmaker.ASTEROIDS = graphmaker.accessNestedData(target, pointer);
+
+    var data = graphmaker.buildArrayFrom(graphmaker.ASTEROIDS, {
+            name: "name",
+            size: "estimated_diameter_min",
+            speed: "kilometers_per_second",
+            missedby: "kilometers"
+        }, true);
+
+    var toggleVals = {
+            name: "name",
+            size: "size",
+            speed: "speed",
+            missedby: "missedby"};
+
+    var output = graphmaker.generateToggleGraph(data, toggleVals);
+
+    document.getElementById("graph").appendChild(output);
+
+});

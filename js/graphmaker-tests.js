@@ -150,8 +150,6 @@ QUnit.test("buildArrayFrom", function(assert){
 
         newArray = this.graphmaker.buildArrayFrom(data, {age: "age"}, true);
 
-        console.log(newArray);
-
         assert.equal(newArray[0]['age'], 26, 'deep setting ensures objects are not passed. Retrieved 26 instead of Object')
 
 
@@ -400,7 +398,6 @@ QUnit.module( "DOM Tools", {
         });
 
 
-
 }});
 
 /* buildDomElementFrom */
@@ -471,5 +468,7 @@ QUnit.test("generateToggleGraph", function(assert){
 
     /* Can generate a container with JSON lists in the DOM */
     assert.ok(graph, "Can generate a container with real data lists in the DOM");
+
+        graph.parentNode.removeChild(graph);
 
 })
