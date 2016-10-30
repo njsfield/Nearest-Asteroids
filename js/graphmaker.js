@@ -57,22 +57,18 @@ Graphmaker.prototype.getRawDataAsync = function(url, settings, callback){
 
 
 /* Function to access nested JSON data */
-Graphmaker.prototype.accessNestedData = function(rawdata, key) {
+Graphmaker.prototype.accessNestedData = function(rawdata, key, deep) {
 
-    var that = this;
-    var result = null;
+    var that = this,
+        result = null;
 
     if(rawdata.constructor === Array) {
 
         for(var i = 0; i < rawdata.length; i++) {
 
-            result = that.accessNestedData(rawdata[i], key);
+            result = that.accessNestedData(rawdata[i], key, deep);
 
-            if (result) {
-
-                break;
-            }
-
+            if (result) break;
         }
     }
     else {
@@ -81,22 +77,32 @@ Graphmaker.prototype.accessNestedData = function(rawdata, key) {
 
                 if(prop == key) {
 
-                    return rawdata[key];
+                    if (deep) {
+
+                        if (typeof rawdata[key] != "object") {
+
+                            return rawdata[key];
+
+                        } else {
+
+                            result = that.accessNestedData(rawdata[prop], key, deep);
+
+                            if (result) break;
+                        }
+
+                    } else return rawdata[key];
                 }
 
             else if(rawdata[prop] instanceof Object || rawdata[prop] instanceof Array) {
 
-                result = that.accessNestedData(rawdata[prop], key);
+                result = that.accessNestedData(rawdata[prop], key, deep);
 
-                if (result) {
-
-                    break;
-                }
+                if (result) break;
             }
         }
     }
 
-  return result;
+    return result;
 
 }
 
@@ -105,7 +111,7 @@ Graphmaker.prototype.accessNestedData = function(rawdata, key) {
 
 /* Function to build array from dataset with object argument containing key/value pairs */
 
-Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets){
+Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets, deep){
 
     var that = this;
     var resultsArray = [];
@@ -116,7 +122,7 @@ Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets){
 
         for (var label in labelAndTargets) {
 
-            result[label] = that.accessNestedData(item, labelAndTargets[label]);
+            result[label] = that.accessNestedData(item, labelAndTargets[label], deep);
 
             if (!result[label]) return "Cannot find property " + labelAndTargets[label] + " in " + item;
 
@@ -235,9 +241,86 @@ Graphmaker.prototype.formatNumTo = function(num, decPlaces, postString){
 
 ////* DOM TOOLS *////
 
+/* buildDomElementFrom */
+
 Graphmaker.prototype.buildDomElementFrom = function(name, attrs, content){
 
+    var elt = document.createElement(name);
+
+    if (arguments.length == 1) {
+
+        return elt || "Unable to build a " + name + "element";
+
+    } else if (arguments.length == 2 && typeof arguments[1] == "string") {
+
+        elt.textContent = attrs;
+
+        return elt;
+    };
+
+    /* Append attrs */
+    for (var attr in attrs){
+
+        elt.setAttribute(attr, attrs[attr]);
+
+    }
+
+    elt.innerHTML = content;
+    return elt;
+
+}
+
+/* generateToggleArray */
+
+Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styleLinks){
+
+    var container       = this.buildDomElementFrom("div"),
+        toggleContainer = this.buildDomElementFrom("ul");
+        dataContainer   = this.buildDomElementFrom("ul");
 
 
+    /*  E.G toggleVals = {name: "name", size: "size", miss-distance: "miss-distance"}
+        styleLinks = {top: ["0%", "100%"]}
+    */
+
+
+    /* Generate dataitems */
+
+    for (var item of data) {
+
+        var dataElt = this.buildDomElementFrom("li", item, (item['name'] || ""));
+
+        dataContainer.appendChild(dataElt);
+
+    }
+
+    /* Generate toggleitems */
+
+    for (var label in toggleVals){
+
+        var toggleElt = this.buildDomElementFrom("li", label);
+
+        /* Closure needed in loop */
+        (function(setting){
+
+        toggleElt.addEventListener("click",function(){
+
+            Array.prototype.forEach.call(dataContainer.children, function(child){
+
+                child.setAttribute("display", child.getAttribute(setting))
+
+            });
+        });
+
+        })(label);
+
+        toggleContainer.appendChild(toggleElt);
+
+    }
+
+    container.appendChild(toggleContainer);
+    container.appendChild(dataContainer);
+
+    return container;
 
 }

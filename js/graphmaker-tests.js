@@ -141,7 +141,20 @@ QUnit.test("buildArrayFrom", function(assert){
 
         assert.ok(Object.keys(item).toString() === 'name,age', "name: " + item['name'] + " age: " + item['age']);
 
-    }
+    };
+
+    // Use buildArrayFroms deep argument to ensure deep string/number is accessed
+    assert.ok(true, 'Use buildArrayFroms deep argument to ensure deep string/number is accessed');
+
+        data  = [{hello: {age: [{field: {name: "nick", age: 26}}]}}, {hello: {age: [{field: {name: "john", age: 46}}]}}]
+
+        newArray = this.graphmaker.buildArrayFrom(data, {age: "age"}, true);
+
+        console.log(newArray);
+
+        assert.equal(newArray[0]['age'], 26, 'deep setting ensures objects are not passed. Retrieved 26 instead of Object')
+
+
 });
 
 
@@ -390,12 +403,73 @@ QUnit.module( "DOM Tools", {
 
 }});
 
+/* buildDomElementFrom */
 QUnit.test("buildDomElementFrom", function(assert){
 
-    test.assert(true, "Can build dom element named by first argument");
+    assert.ok(true, "Can build dom element named by first argument");
 
-    var div = this.graphmaker.buildDomElementFrom("div");
+    var div = this.graphmaker.buildDomElementFrom("span");
 
-    
+    /* Basic Construction */
+    assert.ok(typeof div == "object", "can construct dom element");
+
+        div = this.graphmaker.buildDomElementFrom("span", "Hello World");
+
+    /* Construction */
+    assert.equal(div.innerHTML, "Hello World", "can construct dom element with text in");
+
+    /* Attribute additions */
+        div = this.graphmaker.buildDomElementFrom("span", {style: "color: red;"},"Hello World");
+
+    assert.equal(div.style.color, "red", "can add attributes");
+
+
 
 });
+
+/* generateToggleGraph */
+QUnit.test("generateToggleGraph", function(assert){
+
+    assert.ok(true, "Can build container with toggle items and dataset");
+
+        var data = [{name: "nick", age: 26, career: "software", birthday: 1989},
+                    {name: "jen", age: 29, career: "teacher", birthday: 1986},
+                    {name: "alex", age: 60, career: "unemployed", birthday: 1920},
+                    {name: "tom", age: 45, career: "sales", birthday: 1974},
+                    {name: "matt", age: 18, career: "drugdealer", birthday: 1994}],
+
+            toggleVals = {name: "name", age: "age", career: "career", birthday: "birthday"};
+
+        var output = this.graphmaker.generateToggleGraph(data, toggleVals);
+
+        var graph = document.getElementById("graph").appendChild(output);
+
+    /* Can generate a container with lists in the DOM */
+    assert.ok(graph, "Can generate a container with lists in the DOM");
+
+        graph.children[0].children[0].click();
+
+        var displayResult = graph.children[1].children[1].getAttribute("display");
+
+    /* Can set display attribute when toggle item clicked */
+    assert.equal(displayResult, "jen", "Can set display attribute when toggle item clicked");
+
+        graph.parentNode.removeChild(graph);
+
+            data = this.graphmaker.buildArrayFrom(this.graphmaker.ASTEROIDS, {
+                name: "name",
+                size: "estimated_diameter_min",
+                speed: "kilometers_per_second",
+                missedby: "kilometers"
+            }, true);
+
+            toggleVals = {name: "name", size: "size", speed: "speed", missedby: "missedby"};
+
+            output = this.graphmaker.generateToggleGraph(data, toggleVals);
+
+            graph = document.getElementById("graph").appendChild(output);
+
+    /* Can generate a container with JSON lists in the DOM */
+    assert.ok(graph, "Can generate a container with real data lists in the DOM");
+
+})
