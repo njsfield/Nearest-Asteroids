@@ -147,6 +147,38 @@ Graphmaker.prototype.sortBy = function(dataset, property, direction){
 
 }
 
+/* Function to sort data array based on property, then scale between given array values */
+
+Graphmaker.prototype.scale = function(data, prop, minToMaxArray){
+
+    var that = this;
+
+    data = this.sortBy(data, prop);
+
+    /* Default */
+    if (!minToMaxArray) minToMaxArray = [0,100];
+
+    var min = minToMaxArray[0],
+        max = minToMaxArray[1];
+
+    if (typeof min != "number" || typeof max != "number") {
+        return "Cannot understand scale parameters: " + minToMaxArray;
+    };
+
+    var scalefunc = function(val){
+
+        val = (val - data[0][prop]) / (data[data.length-1][prop] - data[0][prop]);
+        val *= max - min;
+        val += min;
+        return val;
+
+    }
+
+    return that.nestedReplaceWith(data, prop, scalefunc);
+
+
+}
+
 
 
 

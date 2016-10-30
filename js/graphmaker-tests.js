@@ -280,18 +280,29 @@ QUnit.test("Use sortBy to sort array of real JSON data based on proeprty value",
     }
 });
 
-// // use scale to take set of data, sort it and then return original data with scaled values substituted
-//
-// QUnit.test("Use scale to sort data, then return original data with scaled values substituted", function(assert){
-//
-//     var array = this.graphmaker.buildArrayFrom(this.graphmaker.ASTEROIDS, {name: "name", size: "estimated_diameter_min"});
-//         newArray = this.graphmaker.scale(array, 'size', [0, 100]);
-//
-//         assert.equal(newArray[0]['size'], 0, 'should scale lowest value to minscale value')
-//         assert.equal(newArray[newArray.length-1]['size'], 100, 'should scale highest value to maxscale value')
-//
-//
-// })
+// use scale to take set of data, sort it and then return original data with scaled values substituted
+
+QUnit.test("Use scale to sort data, then return original data with scaled values substituted", function(assert){
+
+    var array = [{age:50},{age:40},{age:70},{age:60}];
+        newArray = this.graphmaker.scale(array, 'age');
+
+        assert.equal(newArray[0]['age'], 0, 'should scale lowest value to 0 by default');
+        assert.equal(newArray[newArray.length-1]['age'], 100, 'should scale highest value to 100 by default');
+
+        newArray = this.graphmaker.scale(array, 'age', [0,200]);
+
+        assert.equal(newArray[0]['age'], 0, 'should scale lowest value to minscale value 0');
+        assert.equal(newArray[newArray.length-1]['age'], 200, 'should scale lowest value to minscale value 200');
+
+        array = this.graphmaker.buildArrayFrom(this.graphmaker.ASTEROIDS, {name: "name", size: "estimated_diameter_min"});
+        newArray = this.graphmaker.scale(array, 'size', [30,60]);
+
+        assert.equal(newArray[0]['size'], 30, 'can work with complex objects. Min value = 30');
+        assert.equal(newArray[newArray.length-1]['size'], 60, 'can work with complex objects. Max value = 60');
+
+
+})
 
 
 
