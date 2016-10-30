@@ -103,9 +103,9 @@ Graphmaker.prototype.accessNestedData = function(rawdata, key) {
 
 
 
-/* Function to compare data sets, and build new array of objects */
+/* Function to build array from dataset with object argument containing key/value pairs */
 
-Graphmaker.prototype.compareAndBuild = function(dataset, id, property, proplabel){
+Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets){
 
     var that = this;
     var resultsArray = [];
@@ -114,28 +114,54 @@ Graphmaker.prototype.compareAndBuild = function(dataset, id, property, proplabel
 
         var result = {};
 
-        result[id] = item[id];
+        for (var label in labelAndTargets) {
 
-        if (!result[id]) {
-            return "Cannot find property " + id + " in " + item;
-        }
+            result[label] = that.accessNestedData(item, labelAndTargets[label]);
 
-        result[proplabel] = that.accessNestedData(item, property);
+            if (!result[label]) return "Cannot find property " + labelAndTargets[label] + " in " + item;
 
-        if (typeof result[proplabel] != 'number') {
-
-            return "Cannot find property " + property + " in " + item;
         }
 
         resultsArray.push(result);
-
     };
-
-    resultsArray = resultsArray.sort(function(a,b){
-
-        return a[proplabel] < b[proplabel];
-    });
 
     return resultsArray;
 
 }
+
+// /* Function to compare data sets, and build new array of objects */
+//
+// Graphmaker.prototype.compareAndBuild = function(dataset, id, property, proplabel){
+//
+//     var that = this;
+//     var resultsArray = [];
+//
+//     for (var item of dataset) {
+//
+//         var result = {};
+//
+//         result[id] = item[id];
+//
+//         if (!result[id]) {
+//             return "Cannot find property " + id + " in " + item;
+//         }
+//
+//         result[proplabel] = that.accessNestedData(item, property);
+//
+//         if (typeof result[proplabel] != 'number') {
+//
+//             return "Cannot find property " + property + " in " + item;
+//         }
+//
+//         resultsArray.push(result);
+//
+//     };
+//
+//     resultsArray = resultsArray.sort(function(a,b){
+//
+//         return a[proplabel] < b[proplabel];
+//     });
+//
+//     return resultsArray;
+//
+// }

@@ -203,16 +203,13 @@ QUnit.module( "Comparing Data", {
 
 // compareAndBuild
 
-QUnit.test("Use compareAndBuild function to take data, compare one element set, then build new array of objects", function(assert){
+QUnit.test("Use buildArrayFrom to generate array from data set and label/target data", function(assert){
 
-    var sorted = this.graphmaker.compareAndBuild(this.graphmaker.ASTEROIDS, "name", "estimated_diameter_min", "diameter");
+    var newArray = this.graphmaker.buildArrayFrom(this.graphmaker.ASTEROIDS, {name: "name", size: "estimated_diameter_min"});
 
-    var decrementingNum = Infinity;
-    var results = sorted.forEach(function(asteroid){
+    for (var item of newArray){
 
-        assert.ok(asteroid.diameter < decrementingNum, asteroid.diameter + " is greater than...");
-        decrementingNum = asteroid.diameter;
-    });
+        assert.ok(Object.keys(item).toString() === 'name,size', "name: " + item['name'] + " size: " + item['size']);
 
-    assert.ok(true, "0")
+    }
 });
