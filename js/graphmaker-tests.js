@@ -494,7 +494,6 @@ QUnit.test("listToToggle", function(assert){
         menu.lastChild.click();
 
     var newText = document.querySelector('.display').textContent;
-
     /* on toggle click, text content changes */
     assert.ok(currentText != newText, "Changes display text when back/forward items clicked: " + currentText + " became " + newText);
 })

@@ -220,6 +220,14 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
         if (listIndex == elts.length - 3) listIndex = 0;
         display.textContent = elts[listIndex].textContent;
         if (fireOnChange) elts[listIndex].click();
+    });
+
+    backBtn.addEventListener("click", function(){
+        listIndex--;
+        // Checks to see if listIndex greater than elts length (minus three for added elts)
+        if (listIndex == -1) listIndex = elts.length - 3;
+        display.textContent = elts[listIndex].textContent;
+        if (fireOnChange) elts[listIndex].click();
     })
 
 }
