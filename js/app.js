@@ -24,7 +24,7 @@ graphmaker.getRawDataAsync(graphmaker.url, {method: "GET"}, function(){
             name: "name",
             size: "size",
             speed: "speed",
-            missedby: "missedby"};
+            missedby: "miss distance"};
 
     var output = graphmaker.generateToggleGraph(data, toggleVals);
                  graphmaker.listToToggle(output.firstChild, ['<', '>'], true);

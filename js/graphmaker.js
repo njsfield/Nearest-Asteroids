@@ -168,7 +168,7 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals) {
     }
     /* Generate toggleitems */
     for (var label in toggleVals) {
-        var toggleElt = this.buildDomElementFrom("li", label);
+        var toggleElt = this.buildDomElementFrom("li", toggleVals[label]);
         /* Closure needed in loop */
         (function(setting) {
             toggleElt.addEventListener("click", function() {
