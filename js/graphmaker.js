@@ -92,8 +92,10 @@ Graphmaker.prototype.sortBy = function(dataset, property, direction) {
 
 /* Function to sort data array based on property, then scale between given array values */
 Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
-        var that = this;
-        data = this.sortBy(data, prop);
+        var that     = this;
+            smallest = this.sortBy(Object.create(data), prop)[0][prop];
+            largest  = this.sortBy(Object.create(data), prop)[data.length - 1][prop];
+
         /* Default */
         if (!minToMaxArray) minToMaxArray = [0, 100];
         var min = minToMaxArray[0],
@@ -102,7 +104,7 @@ Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
             return "Cannot understand scale parameters: " + minToMaxArray;
         };
         var scalefunc = function(val) {
-            val = (val - data[0][prop]) / (data[data.length - 1][prop] - data[0][prop]);
+            val = (val - smallest) / (largest - smallest);
             val *= max - min;
             val += min;
             return val;
@@ -154,7 +156,11 @@ Graphmaker.prototype.buildDomElementFrom = function(name, attrs, content) {
     }
 
 /* generateToggleArray */
-Graphmaker.prototype.generateToggleGraph = function(data, toggleVals) {
+Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
+    var that      = this,
+        eltMap     = Array.prototype.map,
+        eltForEach = Array.prototype.forEach;
+
     var container       = this.buildDomElementFrom("div"),
         toggleContainer = this.buildDomElementFrom("ul");
         dataContainer   = this.buildDomElementFrom("ul");
@@ -172,8 +178,18 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals) {
         /* Closure needed in loop */
         (function(setting) {
             toggleElt.addEventListener("click", function() {
-                Array.prototype.forEach.call(dataContainer.children, function(child) {
-                    child.textContent = child.getAttribute(setting);
+
+                var workingData = that.buildArrayFrom(data, {[setting]: setting});
+                    workingData = that.dataToStyles(workingData, styles[setting]);
+
+                eltForEach.call(dataContainer.children, function(child, index) {
+                    child.textContent  = child.getAttribute(setting);
+                    if (workingData) {
+                        child.style.cssText = workingData[index];
+                    } else {
+                        child.removeAttribute('style');
+                    }
+
                 });
             });
         })(label);
@@ -229,5 +245,75 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
         display.textContent = elts[listIndex].textContent;
         if (fireOnChange) elts[listIndex].click();
     })
+
+}
+
+/* Accepts dataset (with one prop), and style rules. Returns style object with mapped data */
+Graphmaker.prototype.dataToStyles = function(dataset, styles){
+    var that = this,
+        // key expects only one property
+        key  = Object.keys(dataset[0]).toString();
+    // prevent further action
+    if (!styles) return null;
+    // make empty array of dataset length
+    var results = Array(dataset.length).fill(null),
+        //current holds temporary map of data
+        current;
+    // will build in to...
+    var styleObj = {};
+
+        for (var style in styles){
+            // simply ensures each item is not stringified
+            current = that.nestedReplaceWith(Array.from(dataset), key, (num) => parseFloat(num));
+                //1. if value is specified to map to style
+                if (styles[style][0] == 'value') {
+                    // if percent requested...
+                    if (styles[style][1] == '%') {
+                        // scale each between 0 - 100
+                        current = that.scale(current, key);
+                        // and add % to end, then append to object
+                        current = that.nestedReplaceWith(current, key, (num) => num + "%");
+                    } else {
+                        // otherwise, scale between 1 and 2
+                        current = that.scale(current, key, [1,2]);
+                        // and add other style to end, then append to object
+                        current = that.nestedReplaceWith(current, key, (num) => num + styles[style][1]);
+                    }
+
+                } else if (styles[style][0] == 'order') {
+                        // make fake array with key and 0,1,2,3,4 etc
+                        current = [];
+                        for (var i = 0; i < dataset.length; i++){
+                            current.push({[key]: i});
+                        }
+                        // scale it between 0 - 100
+                        current = that.scale(current, key);
+                        // append to object - each array with % at the end
+                        current = that.nestedReplaceWith(current, key, (num) => num + "%");
+                }
+            // finally flatten array of objects to array of strings
+            styleObj[style] = current.map(c => c[Object.keys(c).toString()]);
+        }
+
+        // to produce final string array...
+        var final = results.map(function (c, index, a){
+            var res = {},
+                str = '';
+            // access the indexed item in each object
+            for (var s in styleObj){
+                res[s] = styleObj[s][index];
+            };
+            // then build string from each obj prop, :, value, ;
+            for (var x in res){
+                str += x;
+                str += ": ";
+                str += res[x];
+                str += "; ";
+            }
+            return str;
+
+        });
+
+        return final;
 
 }
