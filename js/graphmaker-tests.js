@@ -403,6 +403,8 @@ QUnit.module( "DOM Tools", {
 /* buildDomElementFrom */
 QUnit.test("buildDomElementFrom", function(assert){
 
+    var done = assert.async();
+
     assert.ok(true, "Can build dom element named by first argument");
 
     var div = this.graphmaker.buildDomElementFrom("span");
@@ -420,12 +422,14 @@ QUnit.test("buildDomElementFrom", function(assert){
 
     assert.equal(div.style.color, "red", "can add attributes");
 
-
+    done();
 
 });
 
 /* generateToggleGraph */
 QUnit.test("generateToggleGraph", function(assert){
+
+    var done = assert.async();
 
     assert.ok(true, "Can build container with toggle items and dataset");
 
@@ -446,9 +450,9 @@ QUnit.test("generateToggleGraph", function(assert){
 
         graph.children[0].children[0].click();
 
-        var displayResult = graph.children[1].children[1].getAttribute("display");
+        var displayResult = graph.children[1].children[1].textContent;
 
-    /* Can set display attribute when toggle item clicked */
+    /* Can set text content when toggle item clicked */
     assert.equal(displayResult, "jen", "Can set display attribute when toggle item clicked");
 
         graph.parentNode.removeChild(graph);
@@ -469,6 +473,28 @@ QUnit.test("generateToggleGraph", function(assert){
     /* Can generate a container with JSON lists in the DOM */
     assert.ok(graph, "Can generate a container with real data lists in the DOM");
 
-        graph.parentNode.removeChild(graph);
+    done();
 
+})
+
+/* menuToToggle */
+
+QUnit.test("listToToggle", function(assert){
+
+    /* Can take existing set of DOM elements, then convert them to toggle UI */
+    var menu = graph.firstChild.firstChild;
+
+        this.graphmaker.listToToggle(menu, ['<', '>'], true);
+
+    /* Can take existing set of DOM elements, then convert them to toggle UI */
+    assert.ok(menu.lastChild.textContent == ">", "Can convert list items to toggle UI: " + menu.lastChild.textContent);
+
+    var currentText = document.querySelector('.display').textContent;
+
+        menu.lastChild.click();
+
+    var newText = document.querySelector('.display').textContent;
+
+    /* on toggle click, text content changes */
+    assert.ok(currentText != newText, "Changes display text when back/forward items clicked: " + currentText + " became " + newText);
 })

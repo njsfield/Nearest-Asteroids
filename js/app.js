@@ -1,5 +1,3 @@
-/* Test against QUnit failures */
-
 /* Initialize */
 var graphmaker = new Graphmaker();
 
@@ -29,6 +27,7 @@ graphmaker.getRawDataAsync(graphmaker.url, {method: "GET"}, function(){
             missedby: "missedby"};
 
     var output = graphmaker.generateToggleGraph(data, toggleVals);
+                 graphmaker.listToToggle(output.firstChild, ['<', '>'], true);
 
     document.getElementById("graph").appendChild(output);
 

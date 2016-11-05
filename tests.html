@@ -11,11 +11,19 @@
 
 <body>
     <!-- Display -->
-    <div id="graph"></div>
+    <div id="graph" style="display: none;"></div>
+
+
+    <!-- Qunit Initialize -->
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script src="https://code.jquery.com/qunit/qunit-2.0.1.js"></script>
+
 
     <!--Graphmaker Base-->
     <script src="js/graphmaker.js"></script>
-    <!--Initialise-->
-    <script src="js/app.js"></script>
+    <!--Graphmaker Tests-->
+    <script src="js/graphmaker-tests.js"></script>
+
 </body>
 </html>
