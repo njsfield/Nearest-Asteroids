@@ -24,13 +24,13 @@ Graphmaker.prototype.getRawDataAsync = function(url, settings, callback) {
         var that = this;
         if (!url) return undefined;
         var xhr = new XMLHttpRequest();
-        xhr.onload = function(data) {
+        xhr.addEventListener("load", function(data) {
             that.rawdata = data.target.responseText;
             callback(null, that.rawdata);
-        };
-        xhr.onerror = function(e) {
+        });
+        xhr.addEventListener("error", function(e) {
             callback('Error retrieving data:' + e, undefined);
-        };
+        });
         xhr.open(settings.method, url, true);
         xhr.send();
     }
@@ -39,7 +39,7 @@ Graphmaker.prototype.getRawDataAsync = function(url, settings, callback) {
 Graphmaker.prototype.accessNestedData = function(rawdata, key, deep) {
         var that = this,
             result = null;
-        if (rawdata.constructor === Array) {
+        if (Array.isArray(rawdata)) {
             for (var i = 0; i < rawdata.length; i++) {
                 result = that.accessNestedData(rawdata[i], key, deep);
                 if (result) break;
@@ -55,7 +55,7 @@ Graphmaker.prototype.accessNestedData = function(rawdata, key, deep) {
                             if (result) break;
                         }
                     } else return rawdata[key];
-                } else if (rawdata[prop] instanceof Object || rawdata[prop] instanceof Array) {
+                } else if (typeof rawdata[prop] === "object") {
                     result = that.accessNestedData(rawdata[prop], key, deep);
                     if (result) break;
                 }
@@ -68,11 +68,11 @@ Graphmaker.prototype.accessNestedData = function(rawdata, key, deep) {
 Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets, deep) {
         var that = this;
         var resultsArray = [];
-        for (var item of dataset) {
+        for (var item = 0; item < dataset.length; item++) {
             var result = {};
             for (var label in labelAndTargets) {
-                result[label] = that.accessNestedData(item, labelAndTargets[label], deep);
-                if (!result[label]) return "Cannot find property " + labelAndTargets[label] + " in " + item;
+                result[label] = that.accessNestedData(dataset[item], labelAndTargets[label], deep);
+                if (!result[label]) return "Cannot find property " + labelAndTargets[label] + " in " + dataset[item];
             }
             resultsArray.push(result);
         };
@@ -114,11 +114,11 @@ Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
 
 /* Function to find object property values and replace/format their values */
 Graphmaker.prototype.nestedReplaceWith = function(dataset, property, _new) {
-        dataset = dataset instanceof Array ? dataset : [dataset];
+        dataset = Array.isArray(dataset) ? dataset : [].concat(dataset);
         var newArray = [];
-        for (var item of dataset) {
-            var newItem = item;
-            item[property] = _new instanceof Function ? _new(item[property]) : _new;
+        for (var item = 0; item < dataset.length; item++) {
+            var newItem = dataset[item];
+            dataset[item][property] = _new instanceof Function ? _new(dataset[item][property]) : _new;
             newArray.push(newItem);
         }
         return newArray;
@@ -157,8 +157,7 @@ Graphmaker.prototype.buildDomElementFrom = function(name, attrs, content) {
 
 /* generateToggleArray */
 Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, className, styles) {
-    var that      = this,
-        eltMap     = Array.prototype.map,
+    var that       = this,
         eltForEach = Array.prototype.forEach;
 
     var container       = this.buildDomElementFrom("div"),
@@ -166,9 +165,9 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, className,
         dataContainer   = this.buildDomElementFrom("ul");
 
     /* Generate dataitems */
-    for (var item of data) {
-        var span = that.buildDomElementFrom("span",(item['name'] || ""));
-        var dataElt = that.buildDomElementFrom("li", item, span);
+    for (var item = 0; item < data.length; item++) {
+        var span    = that.buildDomElementFrom("span",(data[item]['name'] || ""));
+        var dataElt = that.buildDomElementFrom("li", data[item], span);
             dataElt.classList.add(className);
             dataContainer.appendChild(dataElt);
     }
@@ -179,7 +178,7 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, className,
         (function(setting) {
             toggleElt.addEventListener("click", function() {
 
-                var workingData = that.buildArrayFrom(data, {[setting]: setting});
+                var workingData = that.buildArrayFrom(data, (function(s){var x = {}; x[s] = s; return x}(setting)));
                     workingData = that.dataToStyles(workingData, styles[setting]);
 
                 eltForEach.call(dataContainer.children, function(child, index) {
@@ -192,7 +191,7 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, className,
 
                 });
             });
-            
+
         })(label);
         toggleContainer.appendChild(toggleElt);
     }
@@ -261,7 +260,7 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
     // prevent further action
     if (!styles) return null;
     // make empty array of dataset length
-    var results = Array(dataset.length).fill(null),
+    var results = (function(l){var x=[]; for(var y = 0;y<l;y++){x.push(null)}return x}(dataset.length)),
         //current holds temporary map of data
         current;
     // will build in to...
@@ -269,7 +268,7 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
 
         for (var style in styles){
             // simply ensures each item is not stringified
-            current = that.nestedReplaceWith(Array.from(dataset), key, (num) => parseFloat(num));
+            current = that.nestedReplaceWith([].concat(dataset), key, function(num) {return parseFloat(num)});
                 //1. if value is specified to map to style
                 if (styles[style][0] == 'value') {
                     // if percent requested...
@@ -277,27 +276,29 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
                         // scale each between 0 - 100
                         current = that.scale(current, key);
                         // and add % to end, then append to object
-                        current = that.nestedReplaceWith(current, key, (num) => num + "%");
+                        current = that.nestedReplaceWith(current, key, function(num) {return num + "%"});
                     } else {
                         // otherwise, scale between 1 and 2
                         current = that.scale(current, key, [5,10]);
                         // and add other style to end, then append to object
-                        current = that.nestedReplaceWith(current, key, (num) => num + styles[style][1]);
+                        current = that.nestedReplaceWith(current, key, function(num) {return num + styles[style][1]});
                     }
 
                 } else if (styles[style][0] == 'order') {
                         // make fake array with key and 0,1,2,3,4 etc
                         current = [];
                         for (var i = 0; i < dataset.length; i++){
-                            current.push({[key]: i});
+                            current.push((function(key,i){var x = {}; x[key]=i; return x}(key,i)));
+                            // current.push({[key]: i})
                         }
                         // scale it between 0 - 100
                         current = that.scale(current, key);
                         // append to object - each array with % at the end
-                        current = that.nestedReplaceWith(current, key, (num) => num + "%");
+                        current = that.nestedReplaceWith(current, key, function(num) {return num + "%"});
                 }
             // finally flatten array of objects to array of strings
-            styleObj[style] = current.map(c => c[Object.keys(c).toString()]);
+            styleObj[style] = current.map(function (c) {return c[Object.keys(c).toString()]});
+
         }
 
         // to produce final string array...

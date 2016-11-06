@@ -22,11 +22,11 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
     }, true);
 
     // Size formatting
-    data = g.nestedReplaceWith(data, "size", (num) => g.formatNumTo(num, 2, "km"));
+    data = g.nestedReplaceWith(data, "size", function(num) {return g.formatNumTo(num, 2, "km")});
     // Speed formatting
-    data = g.nestedReplaceWith(data, "speed", (num) => g.formatNumTo(num, 2, "km/s"));
+    data = g.nestedReplaceWith(data, "speed", function(num) {return g.formatNumTo(num, 2, "km/s")});
     // Miss Distance formatting
-    data = g.nestedReplaceWith(data, "missedby", (num) => g.formatNumTo(num, 2, "km"));
+    data = g.nestedReplaceWith(data, "missedby", function(num) {return g.formatNumTo(num, 2, "km")});
 
     var toggleVals = {
         name: "Name",
@@ -80,7 +80,6 @@ var info             = document.querySelector(".info"),
 
     // accepts DOM node and toggle class
     function toggleElt(elt, cls){
-        console.log(elt);
         if (!elt.classList.contains(cls)){
             elt.classList.add(cls);
         } else {

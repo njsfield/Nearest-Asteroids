@@ -12,7 +12,10 @@ var      gulp = require('gulp'),
 
 gulp.task("combineScripts", function() {
   return gulp.src(["js/graphmaker.js","js/app.js"])
-    .pipe(concat("index.js"))
+    .pipe(concat("scripts.js"))
+    .pipe(gulp.dest('js'))
+    .pipe(uglify())
+    .pipe(rename("scripts.min.js"))
     .pipe(gulp.dest('js'));
 });
 
