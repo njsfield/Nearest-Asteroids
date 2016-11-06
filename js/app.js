@@ -36,27 +36,64 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
 
     var styles = {
     size: {
-        left: ['value', '%'],
-        top: ['order', '%'],
-        width: ['value', 'em'],
+        left:   ['value', '%'],
+        top:    ['order', '%'],
+        width:  ['value', 'em'],
         height: ['value', 'em']
     },
     speed: {
-        left: ['value', '%'],
-        top: ['order', '%'],
+        left:   ['value', '%'],
+        top:    ['order', '%'],
     },
     missedby: {
-        left: ['value', "%"],
-        top: ['order', '%']
+        left:   ['value', "%"],
+        top:    ['order', '%']
     },
     name: {
-        left: ['order', '%']
+        left:   ['order', '%']
     }
     }
 
-    var output  =   g.generateToggleGraph(data, toggleVals, styles);
+    var output  =   g.generateToggleGraph(data, toggleVals, "graph__point", styles);
                     g.listToToggle(output.firstChild, ['<', '>'], true);
 
-    document.getElementById("graph").appendChild(output);
+                    //Make output BEM friendly
+                    output.classList.add("graph");
+                    output.firstElementChild.classList.add("graph__nav");
+                    output.lastElementChild.classList.add("graph__display");
+
+
+    // Out with the old, in with the new
+
+    var old = document.querySelector(".graph");
+        old.parentElement.replaceChild(output, old);
+
+
+
+// Toggle Info Box
+
+var infoBoxCross     = document.getElementById("info-box-cross"),
+    infoBoxContainer = document.getElementById("info-box-container"),
+    infoIcon         = document.getElementById("info-icon"),
+    footerDate       = document.getElementById("date");
+
+
+    // accepts DOM node and toggle class
+    function toggleElt(elt, cls){
+        if (!elt.classList.contains(cls)){
+            elt.classList.add(cls);
+        } else {
+            elt.classList.remove(cls);
+        }
+    }
+
+    // Binds toggleElt function to icons
+    infoBoxCross.addEventListener('click', toggleElt.bind(null, infoBoxContainer, "hidden"));
+    infoIcon.addEventListener('click', toggleElt.bind(null, infoBoxContainer, "hidden"));
+
+
+    //Footer Date
+    footerDate.textContent = g.date;
+
 
 });

@@ -156,7 +156,7 @@ Graphmaker.prototype.buildDomElementFrom = function(name, attrs, content) {
     }
 
 /* generateToggleArray */
-Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
+Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, className, styles) {
     var that      = this,
         eltMap     = Array.prototype.map,
         eltForEach = Array.prototype.forEach;
@@ -164,14 +164,13 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
     var container       = this.buildDomElementFrom("div"),
         toggleContainer = this.buildDomElementFrom("ul"),
         dataContainer   = this.buildDomElementFrom("ul");
-    /*  E.G toggleVals = {name: "name", size: "size", miss-distance: "miss-distance"}
-        styleLinks = {top: ["0%", "100%"]}
-    */
+
     /* Generate dataitems */
     for (var item of data) {
         var span = that.buildDomElementFrom("span",(item['name'] || ""));
         var dataElt = that.buildDomElementFrom("li", item, span);
-        dataContainer.appendChild(dataElt);
+            dataElt.classList.add(className);
+            dataContainer.appendChild(dataElt);
     }
     /* Generate toggleitems */
     for (var label in toggleVals) {
@@ -223,7 +222,7 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
         fwdBtn.classList.add("next");
 
     // create display element (span)
-    var display = this.buildDomElementFrom("span", elts[0].textContent);
+    var display = this.buildDomElementFrom("span", {display: elts[0].textContent}, elts[0].textContent);
         display.classList.add("display");
 
     //container appendchild(arrow l, display, arrow r)
@@ -239,6 +238,7 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
         // Checks to see if listIndex greater than elts length (minus three for added elts)
         if (listIndex == elts.length - 3) listIndex = 0;
         display.textContent = elts[listIndex].textContent;
+        display.setAttribute('display', elts[listIndex].textContent);
         if (fireOnChange) elts[listIndex].click();
     });
 
@@ -247,6 +247,7 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
         // Checks to see if listIndex greater than elts length (minus three for added elts)
         if (listIndex == -1) listIndex = elts.length - 3;
         display.textContent = elts[listIndex].textContent;
+        display.setAttribute('display', elts[listIndex].textContent);
         if (fireOnChange) elts[listIndex].click();
     })
 
