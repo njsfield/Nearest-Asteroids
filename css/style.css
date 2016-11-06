@@ -43,7 +43,8 @@ ul:nth-child(2) {
 
 li {
     font-size: 1em;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
     position: absolute;
     transition: all .5s ease;
     border-radius: 50%;
@@ -56,10 +57,9 @@ li {
 
 li span{
     text-align: center;
+    border: 1px solid green;
     display: inline-block;
     position: relative;
-    top: calc(50% - .6em);
-    left: calc(-50%);
     width: 10em;
     height: 3em;
 }
