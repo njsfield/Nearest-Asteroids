@@ -72,14 +72,15 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
 
 // Toggle Info Box
 
-var infoBoxCross     = document.getElementById("info-box-cross"),
-    infoBoxContainer = document.getElementById("info-box-container"),
-    infoIcon         = document.getElementById("info-icon"),
-    footerDate       = document.getElementById("date");
+var info             = document.querySelector(".info"),
+    infoClose        = document.querySelector(".info__close"),
+    infoIcon         = document.querySelector(".info-icon"),
+    footerDate       = document.querySelector(".footer-box__date");
 
 
     // accepts DOM node and toggle class
     function toggleElt(elt, cls){
+        console.log(elt);
         if (!elt.classList.contains(cls)){
             elt.classList.add(cls);
         } else {
@@ -88,8 +89,8 @@ var infoBoxCross     = document.getElementById("info-box-cross"),
     }
 
     // Binds toggleElt function to icons
-    infoBoxCross.addEventListener('click', toggleElt.bind(null, infoBoxContainer, "hidden"));
-    infoIcon.addEventListener('click', toggleElt.bind(null, infoBoxContainer, "hidden"));
+    infoClose.addEventListener('click', toggleElt.bind(null, info, "info--hidden"));
+    infoIcon.addEventListener('click', toggleElt.bind(null, info, "info--hidden"));
 
 
     //Footer Date

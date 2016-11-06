@@ -14,18 +14,18 @@
 
 <body ontouchstart="">
 
-    <div id="info-icon">i</div>
+    <div class="info-icon">i</div>
 
-    <div id="info-box-container">
-        <div id="body-overlay" class="toggle-info-box"></div>
+    <div class="info">
+        <div class="body-overlay"></div>
 
-        <div id="info-box">
-                <i id="info-box-cross" class="fa fa-times fa-2x toggle-info-box" aria-hidden="true"></i>
-                <h2><i class="fa fa-location-arrow 1x" aria-hidden="true"></i>Todays Nearest Asteroids</h2>
+        <div class="info__box">
+                <i class="fa fa-times fa-2x info__close" aria-hidden="true"></i>
+                <h2 class="info__box__title"><i class="fa fa-location-arrow 1x info__box__arrow" aria-hidden="true"></i>Todays Nearest Asteroids</h2>
 
                 <p>This app accesses the <a href="https://api.nasa.gov/api.html#NeoWS">Near Earth Object Web Service</a> API to  retrieve data about the nearest asteroids from Earth today.</p>
 
-                <p>The names, miss distance from Earth, velocity and size of the asteroids can be viewed and compared by clicking the &lt; and &gt; arrows. Data is formatted in kilometers. Tap/hover over each sphere to see the corresponding data.</p>
+                <p>The names, miss distance from Earth, velocity and size of the asteroids can be viewed and compared by clicking the &lt; and &gt; arrows. Data is formatted in kilometers. Tap/hover over each sphere to zoom in on corresponding data.</p>
 
                 <p>To find out more, please visit my <a href="https://github.com/njsfield/Nearest-Asteroid-Visual">github</a> page</p>
 
@@ -40,8 +40,8 @@
     <div class="graph"></div>
 
     <!-- Footer -->
-    <div id="footer-box">
-        <div id="date"></div>
+    <div class="footer-box">
+        <div class="footer-box__date"></div>
     </div>
 
     <!--Graphmaker Base-->

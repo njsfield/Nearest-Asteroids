@@ -91,7 +91,7 @@ a  {
 .graph__point {
     font-size: .7em;
     display: flex;
-    color: black;
+    color: gray;
     justify-content: center;
     align-items: center;
     position: absolute;
@@ -103,6 +103,7 @@ a  {
     top: 50%;
     margin: -3em;
     text-align: center;
+    z-index: 2cl;
 }
 
 .graph__point span {
@@ -117,7 +118,8 @@ a  {
 .graph__point:hover,
 .graph__point:focus {
     transform: scale(2);
-    z-index: 2;
+    z-index: 3;
+    color: black;
 
 }
 
@@ -142,22 +144,10 @@ a  {
 
 /*** Info box ****/
 
-#info-icon {
-    display: inline-block;
-    position: absolute;
-    right: 0;
-    top: 0;
-    margin: .5rem;
-    width: 1.5rem;
-    height: 1.5rem;
-    text-align: center;
-    border: 1px solid #fcf5df;
-    opacity: .5;
-}
 
-#info-icon:hover{opacity: 1; cursor: pointer;}
+/* info container */
 
-#info-box-container {
+.info {
     display: block;
     position: absolute;
     transition: all 1s ease;
@@ -167,7 +157,22 @@ a  {
     z-index: 8000;
 }
 
-#info-box {
+.info--hidden {
+    display: none !important;
+}
+
+
+.body-overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+}
+
+
+/* central box */
+
+.info__box {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
@@ -183,18 +188,14 @@ a  {
     animation: slideUp .3s ease-out forwards;
 }
 
-@keyframes slideUp {
-    0% {opacity: 0}
-    100% {opacity: 1}
-}
-
-h2 i {
+/* arrow icon */
+.info__box__arrow {
     margin-right: 1rem;
     transform: rotate(180deg);
     transform-origin: center;
 }
 
-#info-box-cross {
+.info__close {
     position: absolute;
     right: 0;
     top: 0;
@@ -202,22 +203,38 @@ h2 i {
     cursor: pointer;
 }
 
-#body-overlay {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
+/* For info__box */
+@keyframes slideUp {
+    0% {opacity: 0}
+    100% {opacity: 1}
 }
 
-.hidden {
-    display: none !important;
+
+/* 'i' icon */
+.info-icon {
+    display: inline-block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin: .5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    text-align: center;
+    border: 1px solid #fcf5df;
+    opacity: .5;
 }
+
+.info-icon:hover {
+    opacity: 1;
+    cursor: pointer;
+}
+
 
 
 
 /*** Date ****/
 
-#date {
+.footer-box__date {
     position: fixed;
     bottom: 0;
     display: block;
@@ -225,7 +242,7 @@ h2 i {
     padding: 2em;
     font-size: 1.5em;
     text-align: center;
-    padding-top: 1.3rem;
+    padding-top: 1.3eem;
     font-weight: 400;
     z-index: 3;
 }
@@ -271,7 +288,7 @@ h2 i {
         transform: rotate(-90deg) scale(1);
     }
 
-    #date {
+    .footer-box__date {
         font-size: 1em;
     }
 }
