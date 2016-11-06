@@ -48,6 +48,9 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
     missedby: {
         left: ['value', "%"],
         top: ['order', '%']
+    },
+    name: {
+        left: ['order', '%']
     }
     }
 

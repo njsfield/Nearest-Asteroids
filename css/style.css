@@ -1,0 +1,42 @@
+* {
+    box-sizing: border-box;
+}
+
+#graph {
+    display: block;
+    max-width: 800px;
+    margin:0 auto;
+    text-align: center;
+    padding: 50px;
+}
+
+ul:nth-child(2) {
+    list-style: none;
+    position: relative;
+    transition: all .5s ease;
+    height: 300px;
+    border: 1px solid red;
+    padding: 50px;
+}
+
+li {
+    font-size: .3em;
+    display: inline-block;
+    position: absolute;
+    transition: all .5s ease;
+    border-radius: 50%;
+    width: 5em;
+    height: 5em;
+    top: 50%;
+    background: lightgrey;
+}
+
+li span{
+    text-align: center;
+    display: inline-block;
+    position: relative;
+    top: calc(50% - .6em);
+    left: calc(-50%);
+    width: 10em;
+    height: 3em;
+}

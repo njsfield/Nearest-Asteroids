@@ -162,14 +162,15 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
         eltForEach = Array.prototype.forEach;
 
     var container       = this.buildDomElementFrom("div"),
-        toggleContainer = this.buildDomElementFrom("ul");
+        toggleContainer = this.buildDomElementFrom("ul"),
         dataContainer   = this.buildDomElementFrom("ul");
     /*  E.G toggleVals = {name: "name", size: "size", miss-distance: "miss-distance"}
         styleLinks = {top: ["0%", "100%"]}
     */
     /* Generate dataitems */
     for (var item of data) {
-        var dataElt = this.buildDomElementFrom("li", item, (item['name'] || ""));
+        var span = that.buildDomElementFrom("span",(item['name'] || ""));
+        var dataElt = that.buildDomElementFrom("li", item, span);
         dataContainer.appendChild(dataElt);
     }
     /* Generate toggleitems */
@@ -183,7 +184,7 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
                     workingData = that.dataToStyles(workingData, styles[setting]);
 
                 eltForEach.call(dataContainer.children, function(child, index) {
-                    child.textContent  = child.getAttribute(setting);
+                    child.innerHTML  = '<span>'+child.getAttribute(setting)+'</span>';
                     if (workingData) {
                         child.style.cssText = workingData[index];
                     } else {
@@ -192,9 +193,12 @@ Graphmaker.prototype.generateToggleGraph = function(data, toggleVals, styles) {
 
                 });
             });
+            
         })(label);
         toggleContainer.appendChild(toggleElt);
     }
+    // Initialise
+    toggleContainer.firstChild.click();
     container.appendChild(toggleContainer);
     container.appendChild(dataContainer);
     return container;
@@ -275,7 +279,7 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
                         current = that.nestedReplaceWith(current, key, (num) => num + "%");
                     } else {
                         // otherwise, scale between 1 and 2
-                        current = that.scale(current, key, [1,2]);
+                        current = that.scale(current, key, [5,10]);
                         // and add other style to end, then append to object
                         current = that.nestedReplaceWith(current, key, (num) => num + styles[style][1]);
                     }
