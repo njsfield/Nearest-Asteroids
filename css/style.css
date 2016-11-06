@@ -4,30 +4,53 @@
 
 #graph {
     display: block;
-    max-width: 800px;
-    margin:0 auto;
+    font-size: 1rem;
+    max-width: 1000px;
+    height: 100vh;
+    margin: 0 auto;
     text-align: center;
-    padding: 50px;
+    padding: 5% 50px;
+    border: 1px solid green;
 }
+
+/* Nav */
+
+ul:nth-child(1){
+    display: flex;
+    border: 1px solid orange;
+    font-size: 1rem;
+    margin: 5% 0;
+    justify-content: center;
+}
+
+.prev, .next, .display {
+    width: 7em;
+    margin: 1em;
+    border: 1px solid blue;
+}
+
+/* graph */
 
 ul:nth-child(2) {
     list-style: none;
+    font-size: .3rem;
     position: relative;
     transition: all .5s ease;
-    height: 300px;
+    width: 100%;
+    height: 30em;
     border: 1px solid red;
-    padding: 50px;
 }
 
 li {
-    font-size: .3em;
+    font-size: 1em;
     display: inline-block;
     position: absolute;
     transition: all .5s ease;
     border-radius: 50%;
-    width: 5em;
-    height: 5em;
+    width: 6em;
+    height: 6em;
     top: 50%;
+    margin: -3em;
     background: lightgrey;
 }
 
