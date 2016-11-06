@@ -1,5 +1,5 @@
 ## Synopsis
-
+![Image Preview of Live Site](./preview.png)
 This app accesses NASA’s NeoWS API to retrieve nearest asteroids from earth based on today’s (or nearest days) data.
 
 The app is built with the latest browsers in mind, using CSS transforms and animations to render visual representations of the asteroids (and Earth) on screen.
