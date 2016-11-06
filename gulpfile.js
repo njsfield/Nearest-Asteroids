@@ -1,18 +1,18 @@
 "use strict";
 
-var gulp = require('gulp'),
-  concat = require('gulp-concat'),
-  uglify = require('gulp-uglify'),
-  cleanCSS = require('gulp-clean-css'),
-  rename = require('gulp-rename'),
-     del = require('del'),
- autoprefixer = require('gulp-autoprefixer');
+var      gulp = require('gulp'),
+       concat = require('gulp-concat'),
+       uglify = require('gulp-uglify'),
+     cleanCSS = require('gulp-clean-css'),
+       rename = require('gulp-rename'),
+          del = require('del'),
+ autoprefixer = require('gulp-autoprefixer'),
+        babel = require('gulp-babel');
 
 
-gulp.task("minifyScripts", function() {
-  return gulp.src("js/index.js")
-    .pipe(uglify())
-    .pipe(rename('index.min.js'))
+gulp.task("combineScripts", function() {
+  return gulp.src(["js/graphmaker.js","js/app.js"])
+    .pipe(concat("index.js"))
     .pipe(gulp.dest('js'));
 });
 
@@ -26,7 +26,7 @@ gulp.task('minifyCSS', function() {
 
 gulp.task('watchFiles', function() {
     gulp.watch('css/style.css', ['minifyCSS']);
-    gulp.watch('js/index.js', ['minifyScripts']);
+    gulp.watch('js/app.js', ['combineScripts']);
 })
 
 gulp.task('watch', ['watchFiles']);
