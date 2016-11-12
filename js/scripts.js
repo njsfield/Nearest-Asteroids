@@ -93,7 +93,7 @@ Graphmaker.prototype.sortBy = function(dataset, property, direction) {
     }
 
 /* Function to sort data array based on property, then scale between given array values */
-Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
+Graphmaker.prototype.scale = function(data, prop, minToMaxArray, reversed) {
         var that     = this;
             smallest = this.sortBy(Object.create(data), prop)[0][prop];
             largest  = this.sortBy(Object.create(data), prop)[data.length - 1][prop];
@@ -113,7 +113,8 @@ Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
             val += min;
             return val;
         }
-        return that.nestedReplaceWith(data, prop, scalefunc);
+        var results = that.nestedReplaceWith(data, prop, scalefunc);
+        return reversed ? results.reverse() : results;
     }
 
 /* Function to find object property values and replace/format their values */
@@ -258,6 +259,9 @@ Graphmaker.prototype.listToToggle = function(eltsContainer, toggleLabels, fireOn
 
 /* Accepts dataset (with one prop), and style rules. Returns style object with mapped data */
 Graphmaker.prototype.dataToStyles = function(dataset, styles){
+    
+//    dataset = dataset.reverse();
+    
     var that = this,
         // key expects only one property
         key  = Object.keys(dataset[0]).toString();
@@ -282,12 +286,12 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
                     // if percent requested...
                     if (styles[style][1] == '%') {
                         // scale each between 0 - 100
-                        current = that.scale(current, key);
+                        current = that.scale(current, key, [100,0]);
                         // and add % to end, then append to object
                         current = that.nestedReplaceWith(current, key, function(num) {return num + "%"});
                     } else {
                         // otherwise, scale between 1 and 2
-                        current = that.scale(current, key, [5,10]);
+                        current = that.scale(current, key, [10,4]);
                         // and add other style to end, then append to object
                         current = that.nestedReplaceWith(current, key, function(num) {return num + styles[style][1]});
                     }
@@ -300,7 +304,7 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
                             // current.push({[key]: i})
                         }
                         // scale it between 0 - 100
-                        current = that.scale(current, key);
+                        current = that.scale(current, key, [100,0]);
                         // append to object - each array with % at the end
                         current = that.nestedReplaceWith(current, key, function(num) {return num + "%"});
                 }
