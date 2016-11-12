@@ -83,9 +83,11 @@ Graphmaker.prototype.buildArrayFrom = function(dataset, labelAndTargets, deep) {
 Graphmaker.prototype.sortBy = function(dataset, property, direction) {
         if (dataset[0][property] == undefined) return "Cannot find property " + property;
         var resultsArray = dataset.sort(function(a, b) {
-            var x = (typeof a[property]) == "number" ? a[property] : a[property].toLowerCase(),
-                y = (typeof b[property]) == "number" ? b[property] : a[property].toLowerCase();
-            return x < y;
+            var x = (typeof a[property]) == "number" ? a[property] : parseFloat(a[property]);
+            var y = (typeof b[property]) == "number" ? b[property] : parseFloat(b[property]);
+            if (x < y) return -1;
+            else if (x > y) return 1;
+            else return 0;
         });
         return direction == "high-to-low" ? resultsArray : resultsArray.reverse();
     }
@@ -95,6 +97,8 @@ Graphmaker.prototype.scale = function(data, prop, minToMaxArray) {
         var that     = this;
             smallest = this.sortBy(Object.create(data), prop)[0][prop];
             largest  = this.sortBy(Object.create(data), prop)[data.length - 1][prop];
+//
+//        console.log(this.sortBy(Object.create(data), prop));
 
         /* Default */
         if (!minToMaxArray) minToMaxArray = [0, 100];
@@ -267,6 +271,10 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
     var styleObj = {};
 
         for (var style in styles){
+
+            if (styleObj.hasOwnProperty(styles[style])) {
+                styleObj[style] = styleObj[styles[style]];
+            } else {
             // simply ensures each item is not stringified
             current = that.nestedReplaceWith([].concat(dataset), key, function(num) {return parseFloat(num)});
                 //1. if value is specified to map to style
@@ -297,8 +305,19 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
                         current = that.nestedReplaceWith(current, key, function(num) {return num + "%"});
                 }
             // finally flatten array of objects to array of strings
-            styleObj[style] = current.map(function (c) {return c[Object.keys(c).toString()]});
 
+            current = current.map(function (c) {
+                var x;
+
+                for (var prop in c){
+                    x = c[prop];
+                }
+                return x;
+            });
+
+            styleObj[style] = current;
+
+            }
         }
 
         // to produce final string array...
@@ -309,6 +328,8 @@ Graphmaker.prototype.dataToStyles = function(dataset, styles){
             for (var s in styleObj){
                 res[s] = styleObj[s][index];
             };
+
+
             // then build string from each obj prop, :, value, ;
             for (var x in res){
                 str += x;
@@ -365,11 +386,11 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
         left:   ['value', '%'],
         top:    ['order', '%'],
         width:  ['value', 'em'],
-        height: ['value', 'em']
+        height: 'width',
     },
     speed: {
         left:   ['value', '%'],
-        top:    ['order', '%'],
+        top:    ['order', '%']
     },
     missedby: {
         left:   ['value', "%"],

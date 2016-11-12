@@ -138,7 +138,9 @@ a  {
 .graph__point:nth-child(8) {background: #f0bf75}
 .graph__point:nth-child(9) {background: #c2b6a3}
 .graph__point:nth-child(10) {background: #fbc16a}
-
+.graph__point:nth-child(11) {background: #c2d6a1}
+.graph__point:nth-child(12) {background: #fbf16f}
+.graph__point:nth-child(13) {background: #c9b79c}
 
 
 

@@ -39,11 +39,11 @@ g.getRawDataAsync(g.url, {method: "GET"}, function(){
         left:   ['value', '%'],
         top:    ['order', '%'],
         width:  ['value', 'em'],
-        height: ['value', 'em']
+        height: 'width',
     },
     speed: {
         left:   ['value', '%'],
-        top:    ['order', '%'],
+        top:    ['order', '%']
     },
     missedby: {
         left:   ['value', "%"],

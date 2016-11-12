@@ -30,6 +30,7 @@ gulp.task('minifyCSS', function() {
 gulp.task('watchFiles', function() {
     gulp.watch('css/style.css', ['minifyCSS']);
     gulp.watch('js/app.js', ['combineScripts']);
+    gulp.watch('js/graphmaker.js', ['combineScripts']);
 })
 
 gulp.task('watch', ['watchFiles']);
